@@ -145,12 +145,10 @@ def change_to_country(row):
 def extract_emotions(emotion_dict):
     return pd.Series(emotion_dict)
 
-print(df_dict)
 df = df_dict["processed_processed_twitter-who"]
 df2 = df_dict["processed_processed_tw_hshtag_monkeypox"]
 df3 = df_dict["processed_processed_tw_hshtag_covid19"]
 df4 = df_dict["processed_processed_tw_hshtag_flu"]
-# hashtag_tedros = df_dict["processed_processed_twitter-drtedros"]
 
 
 df["country"] = df.apply(change_to_country, axis=1)
