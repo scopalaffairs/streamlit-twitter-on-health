@@ -18,12 +18,6 @@ import plotly.graph_objects as go
 import seaborn as sns
 import streamlit as st
 
-### Datasets
-url = "https://drive.google.com/file/d/1ZElhXCUsQcaNDPwY2Fe_FpXvXuFTlSsk/view?usp=share_link"
-output = "data-final"
-
-gdown.download(url, output, quiet=False)
-
 ### CONSTANTS
 
 # colors
@@ -68,7 +62,6 @@ for root, dirs, files in os.walk(json_dir):
 df = deepcopy(df_dict)
 
 # Clean dataframe
-
 countries = {
     'es': [
         'Argentina',
@@ -152,7 +145,7 @@ def change_to_country(row):
 def extract_emotions(emotion_dict):
     return pd.Series(emotion_dict)
 
-
+print(df_dict)
 df = df_dict["processed_processed_twitter-who"]
 df2 = df_dict["processed_processed_tw_hshtag_monkeypox"]
 df3 = df_dict["processed_processed_tw_hshtag_covid19"]
