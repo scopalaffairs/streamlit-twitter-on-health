@@ -20,12 +20,9 @@ import streamlit as st
 
 ### Datasets
 url = "https://drive.google.com/file/d/1ZElhXCUsQcaNDPwY2Fe_FpXvXuFTlSsk/view?usp=share_link"
-output = "data-final.zip"
+output = "data-final"
 
 gdown.download(url, output, quiet=False)
-
-with zipfile.ZipFile(output, "r") as zip_ref:
-    zip_ref.extractall("data-final")
 
 ### CONSTANTS
 
