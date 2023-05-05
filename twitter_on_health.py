@@ -6,15 +6,26 @@
 import json
 import os
 import random
+import zipfile
 from copy import deepcopy
 from urllib.request import urlopen
 
+import gdown
 import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import seaborn as sns
 import streamlit as st
+
+### Datasets
+url = "https://drive.google.com/file/d/1ZElhXCUsQcaNDPwY2Fe_FpXvXuFTlSsk/view?usp=share_link"
+output = "data-final.zip"
+
+gdown.download(url, output, quiet=False)
+
+with zipfile.ZipFile(output, "r") as zip_ref:
+    zip_ref.extractall("data-final")
 
 ### CONSTANTS
 
