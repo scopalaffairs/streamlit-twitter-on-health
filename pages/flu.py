@@ -34,8 +34,6 @@ header = "Analysing emotion related hashtags across the globe"
 st.set_page_config(page_title=title, layout='wide')
 st.title(title)
 st.header(header)
-st.sidebar.header("Emotions across the globe tagged by")
-
 
 # Setting up columns
 left_column, middle_column, right_column = st.columns([1, 3, 1])
@@ -147,7 +145,62 @@ def change_to_country(row):
 def extract_emotions(emotion_dict):
     return pd.Series(emotion_dict)
 
-df = df_dict["processed_processed_twitter-who"]
-df2 = df_dict["processed_processed_tw_hshtag_monkeypox"]
-df3 = df_dict["processed_processed_tw_hshtag_covid19"]
 df4 = df_dict["processed_processed_tw_hshtag_flu"]
+
+
+################################ 4
+df4["country"] = df4.apply(change_to_country, axis=1)
+df4[['Happy', 'Angry', 'Surprise', 'Sad', 'Fear']] = df4['analyseEmotion'].apply(
+    extract_emotions
+)
+
+grouped = (
+    df4.groupby('country')[['Happy', 'Angry', 'Surprise', 'Sad', 'Fear']]
+    .mean()
+    .reset_index()
+)
+melted = pd.melt(grouped, id_vars='country', var_name='emotion', value_name='mean')
+
+stacked_bar4 = px.bar(
+    melted,
+    x='country',
+    y='mean',
+    color_discrete_sequence=px.colors.sequential.Agsunset,
+    color='emotion',
+    barmode='stack',
+    title="Emotions of Tweets across the globe tagged #flu",
+    width=1440,
+    height=800,
+)
+st.plotly_chart(stacked_bar4,)
+
+var = list(melted["country"].unique())
+agg = []
+for item in var:
+    t = melted[melted["country"] == item]
+    agg.append(t["mean"].idxmax())
+melted = melted[melted.index.isin(agg)]
+melted.reset_index()
+
+globe_plot4 = px.choropleth_mapbox(
+    melted,
+    geojson=geojson,
+    locations='country',
+    featureidkey='properties.ADMIN',
+    mapbox_style='carto-positron',
+    zoom=1,
+    center={'lat': 30, 'lon': 0},
+    opacity=0.5,
+    color="emotion",
+    hover_name='country',
+    color_discrete_sequence=px.colors.sequential.Agsunset,
+    # color_discrete_sequence=px.colors.sequential.Electric,
+    # mapbox_style = "open-street-map",
+    # projection='mercator',
+    # color_continuous_scale="Viridis",
+    title='Emotion Analysis by Country related to tweets tagged #flu',
+    width=1440,
+    height=800,
+)
+
+st.plotly_chart(globe_plot4,)
