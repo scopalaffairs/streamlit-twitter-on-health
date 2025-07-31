@@ -7,7 +7,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-from utils import geojson, map_country
+from utils import *
 
 title = "Sentiment Analysis of Tweets Tagged with #covid19"
 header = "Assessing Public Sentiments towards COVID-19 Outbreaks on Twitter using Sentiment Analysis"
