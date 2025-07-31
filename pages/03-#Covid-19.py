@@ -12,8 +12,8 @@ import streamlit as st
 
 from utils import *
 
-title = "Sentiment Analysis of Tweets Tagged with #Monkeypox"
-header = "Assessing Public Sentiments towards Monkeypox Outbreaks on Twitter using Sentiment Analysis"
+title = "Sentiment Analysis of Tweets Tagged with #covid19"
+header = "Assessing Public Sentiments towards COVID-19 Outbreaks on Twitter using Sentiment Analysis"
 
 st.set_page_config(page_title=title, layout='wide')
 st.title(title)
