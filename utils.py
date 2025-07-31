@@ -81,23 +81,21 @@ countries = {
     'pl': ["Poland"],
 }
 
-plotly_countries = pd.read_csv(
-    'https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv'
+# country lookup optimized
+plotly_countries_set = set(
+    pd.read_csv(
+        'https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv'
+    ).COUNTRY
 )
-plotly_countries = plotly_countries.COUNTRY.to_list()
 
-
-def change_to_country(row):
-    split_location = row["location"].split()
-    for word in split_location:
-        if word in plotly_countries:
-            return word
-    if row["lang"] in countries.keys():
-        random_country = random.choice(countries[row["lang"]])
-        return random_country
-    else:
-        return "Unknown"
-
-
-def extract_emotions(emotion_dict):
-    return pd.Series(emotion_dict)
+# fast mapper
+def map_country(location, lang):
+    try:
+        for word in location.split():
+            if word in plotly_countries_set:
+                return word
+    except:
+        pass
+    if lang in countries:
+        return random.choice(countries[lang])
+    return "Unknown"
