@@ -3,11 +3,8 @@
 
 # (c) 2023 scopalaffairs
 
-import os
-
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 import streamlit as st
 
 from utils import *
@@ -18,7 +15,6 @@ header = "Analyzing Public Sentiments towards Influenza Outbreaks on Social Medi
 st.set_page_config(page_title=title, layout='wide')
 st.title(title)
 st.header(header)
-
 
 filename = "./data-final/tw_hshtag_flu.json"
 
@@ -31,45 +27,31 @@ def load_data(filename):
 
 df = load_data(filename)
 
-with st.spinner('Loading...'):
-    df["country"] = df.apply(change_to_country, axis=1)
-    df[['Happy', 'Angry', 'Surprise', 'Sad', 'Fear']] = df['analyseEmotion'].apply(
-        extract_emotions
-    )
+with st.spinner('Processing data...'):
+    df["country"] = [map_country(loc, lang) for loc, lang in zip(df["location"], df["lang"])]
+    emotions_df = pd.json_normalize(df["analyseEmotion"])
+    df[["Happy", "Angry", "Surprise", "Sad", "Fear"]] = emotions_df
 
-    grouped = (
-        df.groupby('country')[['Happy', 'Angry', 'Surprise', 'Sad', 'Fear']]
-        .mean()
-        .reset_index()
-    )
+    grouped = df.groupby('country')[["Happy", "Angry", "Surprise", "Sad", "Fear"]].mean().reset_index()
     melted = pd.melt(grouped, id_vars='country', var_name='emotion', value_name='mean')
 
-    stacked_bar4 = px.bar(
-        melted,
-        x='country',
-        y='mean',
-        color_discrete_sequence=px.colors.sequential.Agsunset,
-        color='emotion',
-        barmode='stack',
-        title="Emotions across the globe tagged #flu",
-        width=1440,
-        height=800,
-    )
-    st.plotly_chart(
-        stacked_bar4,
-    )
+stacked_bar4 = px.bar(
+    melted,
+    x='country',
+    y='mean',
+    color='emotion',
+    color_discrete_sequence=px.colors.sequential.Agsunset,
+    barmode='stack',
+    title="Emotions across the globe tagged #flu",
+    height=600,
+)
+st.plotly_chart(stacked_bar4, use_container_width=True)
 
-with st.spinner('Loading...'):
-    var = list(melted["country"].unique())
-    agg = []
-    for item in var:
-        t = melted[melted["country"] == item]
-        agg.append(t["mean"].idxmax())
-    melted = melted[melted.index.isin(agg)]
-    melted.reset_index()
+with st.expander("Show interactive world map"):
+    dominant = melted.loc[melted.groupby('country')["mean"].idxmax()].reset_index(drop=True)
 
     globe_plot4 = px.choropleth_mapbox(
-        melted,
+        dominant,
         geojson=geojson,
         locations='country',
         featureidkey='properties.ADMIN',
@@ -80,12 +62,7 @@ with st.spinner('Loading...'):
         color="emotion",
         hover_name='country',
         color_discrete_sequence=px.colors.sequential.Agsunset,
-        color_continuous_scale="Viridis",
         title='Emotion by Country related to tweets tagged #flu',
-        width=1440,
-        height=800,
+        height=600,
     )
-
-    st.plotly_chart(
-        globe_plot4,
-    )
+    st.plotly_chart(globe_plot4, use_container_width=True)
