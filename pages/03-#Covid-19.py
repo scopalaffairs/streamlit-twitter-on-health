@@ -27,6 +27,7 @@ df = load_data(filename)
 # vectorized transformations
 with st.spinner('Processing data...'):
     df["country"] = [map_country(loc, lang) for loc, lang in zip(df["location"], df["lang"])]
+    df = df[df["country"] != "Unknown"].reset_index(drop=True)
     emotions_df = pd.json_normalize(df["analyseEmotion"])
     df[["Happy", "Angry", "Surprise", "Sad", "Fear"]] = emotions_df
 
