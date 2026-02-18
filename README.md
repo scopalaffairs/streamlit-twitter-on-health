@@ -18,3 +18,20 @@ https://scopalaffairs-streamlit-twitter-on-hea-twitter-on-health-2jfica.streamli
 ![Emotions of tweets across the globe tagged #covid](plots/emotions_covid.png)
 
 ![Emotions by Country tagged #covid](plots/emotions_country_covid.png)
+
+## Deployment (Production Server)
+
+The app runs as user `deploy` on port 8501.
+
+**Pull latest changes and restart:**
+```bash
+cd /home/deploy/streamlit-twitter-on-health
+git pull
+pkill -f "streamlit run"
+nohup streamlit run twitter_on_health.py --server.port=8501 --server.headless=true &
+```
+
+**Check if running:**
+```bash
+ps aux | grep streamlit
+```
