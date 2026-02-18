@@ -31,17 +31,17 @@ curl -o data-final/plotly_countries.csv \
 
 ## Deployment (Production Server)
 
-The app runs as user `deploy` on port 8501.
+The app runs as user `deploy` on port 8501, managed by systemd (`streamlit-twitter.service`).
 
 **Pull latest changes and restart:**
 ```bash
 cd /home/deploy/streamlit-twitter-on-health
 git pull
-pkill -f "streamlit run"
-nohup streamlit run twitter_on_health.py --server.port=8501 --server.headless=true &
+sudo systemctl restart streamlit-twitter
 ```
 
-**Check if running:**
+**Check status / logs:**
 ```bash
-ps aux | grep streamlit
+systemctl status streamlit-twitter
+journalctl -u streamlit-twitter -f
 ```
