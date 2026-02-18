@@ -4,9 +4,11 @@
 # (c) 2023 scopalaffairs
 
 import json
-from urllib.request import urlopen
+from pathlib import Path
 
 import pandas as pd
+
+_DATA = Path(__file__).parent / "data-final"
 
 # colors
 white = "rgb(255, 255, 255)"
@@ -14,17 +16,11 @@ blueish = "rgb(200, 200, 255)"
 vintage_brown = "rgb(255,250,240)"
 coastlinecolor = "rgb(205,133,63)"
 
-# loaded once per process via Python's module cache
-with urlopen(
-    'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson'
-) as response:
-    geojson = json.load(response)
+# loaded once per process via Python's module cache (files are local — no network at startup)
+with open(_DATA / "countries.geojson") as f:
+    geojson = json.load(f)
 
-plotly_countries_set = set(
-    pd.read_csv(
-        'https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv'
-    ).COUNTRY
-)
+plotly_countries_set = set(pd.read_csv(_DATA / "plotly_countries.csv").COUNTRY)
 
 # fast mapper
 def map_country(location, lang):

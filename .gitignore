@@ -227,5 +227,9 @@ tags
 # Persistent undo
 [._]*.un~
 
+# static reference data (download manually, see README)
+data-final/countries.geojson
+data-final/plotly_countries.csv
+
 # End of https://www.toptal.com/developers/gitignore/api/python,macos,vim
 

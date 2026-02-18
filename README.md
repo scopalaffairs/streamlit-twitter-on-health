@@ -19,6 +19,16 @@ https://scopalaffairs-streamlit-twitter-on-hea-twitter-on-health-2jfica.streamli
 
 ![Emotions by Country tagged #covid](plots/emotions_country_covid.png)
 
+## Setup (first time only)
+
+Download static reference data (not in git):
+```bash
+curl -o data-final/countries.geojson \
+  "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson"
+curl -o data-final/plotly_countries.csv \
+  "https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv"
+```
+
 ## Deployment (Production Server)
 
 The app runs as user `deploy` on port 8501.
