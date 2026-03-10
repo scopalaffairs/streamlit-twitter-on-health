@@ -7,7 +7,6 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-from utils import geojson
 
 title = "Sentiment Analysis of Tweets Tagged with #WHO"
 header = "Exploring Public Sentiments towards the World Health Organization on Twitter"
@@ -34,25 +33,5 @@ def make_bar(melted):
     )
 
 
-@st.cache_data
-def make_globe(melted):
-    dominant = melted.loc[melted.groupby('country')["mean"].idxmax()].reset_index(drop=True)
-    return px.choropleth_mapbox(
-        dominant,
-        geojson=geojson,
-        locations='country',
-        featureidkey='properties.ADMIN',
-        mapbox_style='carto-positron',
-        zoom=1, center={'lat': 30, 'lon': 0}, opacity=0.5,
-        color="emotion", hover_name='country',
-        color_discrete_sequence=px.colors.sequential.Agsunset,
-        title='Emotion by Country related to tweets tagged #WHO',
-        height=600,
-    )
-
-
 melted = load_data()
 st.plotly_chart(make_bar(melted), use_container_width=True)
-
-with st.expander("Show interactive world map"):
-    st.plotly_chart(make_globe(melted), use_container_width=True)
