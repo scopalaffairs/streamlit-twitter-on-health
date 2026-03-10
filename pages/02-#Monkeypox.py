@@ -22,19 +22,15 @@ filename = "./data-final/tw_hshtag_monkeypox.json"
 @st.cache_data
 def load_data(filename):
     df = pd.read_json(filename, lines=True)
-    return df
-
-
-df = load_data(filename)
-
-with st.spinner('Processing data...'):
     df["country"] = [map_country(loc, lang) for loc, lang in zip(df["location"], df["lang"])]
     df = df[df["country"] != "Unknown"].reset_index(drop=True)
     emotions_df = pd.json_normalize(df["analyseEmotion"])
     df[["Happy", "Angry", "Surprise", "Sad", "Fear"]] = emotions_df
-
     grouped = df.groupby('country')[["Happy", "Angry", "Surprise", "Sad", "Fear"]].mean().reset_index()
-    melted = pd.melt(grouped, id_vars='country', var_name='emotion', value_name='mean')
+    return pd.melt(grouped, id_vars='country', var_name='emotion', value_name='mean')
+
+
+melted = load_data(filename)
 
 stacked_bar2 = px.bar(
     melted,

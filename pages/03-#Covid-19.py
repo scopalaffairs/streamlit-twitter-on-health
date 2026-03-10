@@ -20,20 +20,15 @@ filename = "./data-final/tw_hshtag_covid19.json"
 
 @st.cache_data
 def load_data(filename):
-    return pd.read_json(filename, lines=True)
-
-df = load_data(filename)
-
-# vectorized transformations
-with st.spinner('Processing data...'):
+    df = pd.read_json(filename, lines=True)
     df["country"] = [map_country(loc, lang) for loc, lang in zip(df["location"], df["lang"])]
     df = df[df["country"] != "Unknown"].reset_index(drop=True)
     emotions_df = pd.json_normalize(df["analyseEmotion"])
     df[["Happy", "Angry", "Surprise", "Sad", "Fear"]] = emotions_df
-
-    # group and reshape
     grouped = df.groupby('country')[["Happy", "Angry", "Surprise", "Sad", "Fear"]].mean().reset_index()
-    melted = pd.melt(grouped, id_vars='country', var_name='emotion', value_name='mean')
+    return pd.melt(grouped, id_vars='country', var_name='emotion', value_name='mean')
+
+melted = load_data(filename)
 
 # plot: stacked bar
 stacked_bar3 = px.bar(
