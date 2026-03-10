@@ -29,6 +29,13 @@ curl -o data-final/plotly_countries.csv \
   "https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv"
 ```
 
+Pre-aggregate the raw JSON files into small CSVs (needs to run once, or whenever source data changes):
+```bash
+python preprocess.py
+```
+
+This produces `data-final/melted_*.csv` — a few KB each. The app loads only these files at runtime; the raw JSON files (~140 MB total) are no longer needed on the server.
+
 ## Deployment (Production Server)
 
 The app runs as user `deploy` on port 8501, managed by systemd (`streamlit-twitter.service`).
@@ -45,3 +52,20 @@ sudo systemctl restart streamlit-twitter
 systemctl status streamlit-twitter
 journalctl -u streamlit-twitter -f
 ```
+
+### Systemd memory limit (important on shared servers)
+
+Add a drop-in to cap the process so it can never take down co-hosted services:
+
+```bash
+sudo mkdir -p /etc/systemd/system/streamlit-twitter.service.d
+sudo tee /etc/systemd/system/streamlit-twitter.service.d/limits.conf << 'EOF'
+[Service]
+MemoryMax=512M
+MemorySwapMax=0
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart streamlit-twitter
+```
+
+Adjust `512M` to whatever headroom your server has. With the pre-aggregated CSVs the app idles well under 100 MB.

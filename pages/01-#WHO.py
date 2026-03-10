@@ -16,21 +16,12 @@ st.set_page_config(page_title=title, layout='wide', page_icon="Hospital")
 st.title(title)
 st.header(header)
 
-filename = "./data-final/twitter-who.json"
-
-
 @st.cache_data
-def load_data(filename):
-    df = pd.read_json(filename, lines=True)
-    df["country"] = [map_country(loc, lang) for loc, lang in zip(df["location"], df["lang"])]
-    df = df[df["country"] != "Unknown"].reset_index(drop=True)
-    emotions_df = pd.json_normalize(df["analyseEmotion"])
-    df[["Happy", "Angry", "Surprise", "Sad", "Fear"]] = emotions_df
-    grouped = df.groupby('country')[["Happy", "Angry", "Surprise", "Sad", "Fear"]].mean().reset_index()
-    return pd.melt(grouped, id_vars='country', var_name='emotion', value_name='mean')
+def load_data():
+    return pd.read_csv("./data-final/melted_who.csv")
 
 
-melted = load_data(filename)
+melted = load_data()
 
 stacked_bar = px.bar(
     melted,
