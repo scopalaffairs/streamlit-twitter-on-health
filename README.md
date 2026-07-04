@@ -23,6 +23,7 @@ https://scopalaffairs-streamlit-twitter-on-hea-twitter-on-health-2jfica.streamli
 
 Download static reference data (not in git):
 ```bash
+mkdir -p data-final
 curl -o data-final/countries.geojson \
   "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson"
 curl -o data-final/plotly_countries.csv \
@@ -35,6 +36,13 @@ python preprocess.py
 ```
 
 This produces `data-final/melted_*.csv` — a few KB each. The app loads only these files at runtime; the raw JSON files (~140 MB total) are no longer needed on the server.
+
+## Preview Saved Xquik Exports
+
+Use the Xquik Export Preview page to inspect saved Xquik tweet CSV exports before
+adding them to the health-discourse preprocessing workflow. The preview accepts
+common text columns such as `tweet_text`, `full_text`, `text`, `content`, and `body`,
+then summarizes tracked health hashtags and available location metadata.
 
 ## Deployment (Production Server)
 

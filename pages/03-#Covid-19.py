@@ -3,9 +3,9 @@
 
 # (c) 2023 scopalaffairs
 
-import pandas as pd
 import plotly.express as px
 import streamlit as st
+from utils import load_melted_csv
 
 
 title = "Sentiment Analysis of Tweets Tagged with #covid19"
@@ -18,7 +18,7 @@ st.header(header)
 
 @st.cache_data
 def load_data():
-    return pd.read_csv("./data-final/melted_covid19.csv")
+    return load_melted_csv("melted_covid19.csv")
 
 
 @st.cache_data
