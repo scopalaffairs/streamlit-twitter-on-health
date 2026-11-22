@@ -4,8 +4,8 @@ Stack: Python / Streamlit multipage app (pandas + plotly; seaborn, altair, watch
 
 - [x] 1. Clone, branch, read repo
 - [x] 2. Scan before (throwaway image, NOT committed: python:3.10-slim + host-installed deps; Python version of the server image is an assumption)
-- [ ] 3. Fix fixable findings (requirements.txt only)
-- [ ] 4. Smoke test (pages run with AppTest, server health), rescan
+- [x] 3. Fix fixable findings (requirements.txt only)
+- [x] 4. Smoke test (pages run with AppTest, server health), rescan
 - [ ] 5. Commit, push, PR
 - [ ] 6. PR checks
 
@@ -14,3 +14,5 @@ Stack: Python / Streamlit multipage app (pandas + plotly; seaborn, altair, watch
 - The release notes' server image has only ~49-51 HIGH, i.e. no python-pkg findings: the server build evidently does NOT install this repo's requirements.txt as-is (or uses another Python/package set). The pins here are still old: pip-audit flags streamlit 1.22.0 (PYSEC-2024-153 fixed 1.37.0, GHSA-8qw9-gf7w-42x5 1.30.0, PYSEC-2026-212 1.53.1, PYSEC-2026-2285 1.54.0).
 - Constraint: tornado 6.6+ and pillow 13 need Python >= 3.11; streamlit <= 1.65 caps pillow < 13. Python 3.10-compatible best case: streamlit 1.54 (needs numpy >= 1.23).
 - Plan (py3.10-compatible, no behaviour change expected): streamlit~=1.54.0, numpy~=1.23.5, setuptools>=81; keep pandas/plotly/seaborn/altair/watchdog pins. Verify the four pages with streamlit AppTest on py3.10 and start the server in the container.
+- After (same throwaway method, setuptools replaced like pip would): HIGH+CRIT 82 findings / 43 unique CVEs (5 CRIT, 77 HIGH); protobuf, vendored wheel and jaraco.context gone. Left: pillow 12.3.0 x29 (needs Python >= 3.11 + streamlit >= 1.66, not possible from this repo on 3.10), 53 os-pkgs (50 no fix, 3 fixable only via apt in the build file).
+- Smoke test: streamlit AppTest on py3.10 (streamlit 1.54.0, pandas 1.4.4, numpy 1.23.5, plotly 5.8.2) with synthetic melted_*.csv: main page + 4 pages run without exception, 4 plotly charts. Container (python:3.10-slim + new deps): `streamlit run twitter_on_health.py` health 200 ok, / 200. `use_container_width` still works in 1.54 but is deprecated ("removed after 2025-12-31" warning): do not move to a newer streamlit without replacing it by width="stretch".
